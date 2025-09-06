@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../layout/layout";
 import apiClient from "../utils/apiClient";
 import { useNavigate } from "react-router-dom";
+import AIContentModal from "../component/ContentModal";
 
 const Dashboard = () => {
   
@@ -10,6 +11,8 @@ const Dashboard = () => {
   const [content, setContent] = useState<any>([]);
 
   const [filter, setFilter] = useState("all");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState({})
 
   // Helper function to format date
   const formatDate = (dateString: string) => {
@@ -80,22 +83,6 @@ const Dashboard = () => {
               Manage and track your AI-generated content
             </p>
           </div>
-          <button onClick={() => navigate('/create')} className="mt-4 lg:mt-0 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center shadow-lg hover:shadow-xl">
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            Generate New Content
-          </button>
         </div>
 
         {/* Filter Tabs */}
@@ -235,7 +222,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2 ml-4">
-                      <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition duration-200">
+                      <button onClick={() => { setModalData(content); setIsModalOpen(true) }} className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition duration-200">
                         <svg
                           className="w-5 h-5"
                           fill="none"
@@ -296,6 +283,12 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      <AIContentModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        data={modalData}
+      />
     </Layout>
   );
 };

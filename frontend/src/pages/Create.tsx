@@ -16,6 +16,7 @@ const Starter = () => {
   const [errors, setErrors] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const userId = localStorage.getItem("userId") || "";
 
   const contentTypes = [
     {
@@ -137,27 +138,39 @@ const Starter = () => {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
-      navigate('/dasboard')
+      navigate("/dasboard");
     }
   };
 
   const createEmail = async (payload: any) => {
     return apiClient.post("/generate-email", {
       ...payload,
-      userId: "68bbe53acf959d959df97ac0",
+      userId,
       keywords: payload.keywords.split(","),
     });
   };
 
   const createBlog = async (payload: any) => {
-    return apiClient.post("/blog", payload);
+    return apiClient.post("/blog", {
+      ...payload,
+      userId,
+      keywords: payload.keywords.split(","),
+    });
   };
 
   const createProductDesc = async (payload: any) => {
-    return apiClient.post("/product-description", payload);
+    return apiClient.post("/product-description", {
+      ...payload,
+      userId,
+      keywords: payload.keywords.split(","),
+    });
   };
   const createInstagramCaption = async (payload: any) => {
-    return apiClient.post("/instagram-caption", payload);
+    return apiClient.post("/instagram-caption", {
+      ...payload,
+      userId,
+      keywords: payload.keywords.split(","),
+    });
   };
 
   return (
