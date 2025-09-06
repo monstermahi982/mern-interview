@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
+import { Toaster, toast } from "react-hot-toast";
 
 // Lazy imports for pages
 const Home = lazy(() => import("./pages/Home"));
@@ -20,6 +21,7 @@ function App() {
         <Route path="/setting" element={<Setting />} />
         <Route path="/create" element={<Create />} />
       </Routes>
+      <Toaster position="top-right" reverseOrder={false} />
     </Suspense>
   );
 }

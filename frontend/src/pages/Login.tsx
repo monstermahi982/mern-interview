@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
+import apiClient from "../utils/apiClient";
+import { useNavigate } from "react-router-dom";
 
 interface Erros {
   name: string;
@@ -17,6 +20,7 @@ const Login = () => {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const validateForm = () => {
     const newErrors: Erros = {
@@ -54,16 +58,10 @@ const Login = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
-
     setIsLoading(true);
 
     // Simulate API call
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
       // Here you would make your actual API call
       console.log(isSignUp ? "Sign up data:" : "Login data:", {
         ...(isSignUp && { name }),
@@ -71,7 +69,41 @@ const Login = () => {
         password,
       });
 
-      alert(`${isSignUp ? "Sign up" : "Login"} successful!`);
+      try {
+        if (isSignUp) {
+          const res = await apiClient.post("/register", {
+            email,
+            password,
+            name,
+          });
+          if (res?.data?.email) {
+            toast.success(`${isSignUp ? "Sign up" : "Login"} successful!`);
+            localStorage.setItem("userId", res?.data?._id);
+            localStorage.setItem(
+              "user",
+              JSON.stringify({ email: res?.data?.email, name: res?.data?.name })
+            );
+            navigate('/create')
+          } else {
+            toast.error(`Something went wrong`);
+          }
+        } else {
+          const res = await apiClient.post("/login", { email, password, name });
+          if (res?.data?.success) {
+            toast.success(`${isSignUp ? "Sign up" : "Login"} successful!`);
+            localStorage.setItem("userId", res?.data?.data?._id);
+            localStorage.setItem(
+              "user",
+              JSON.stringify({ email: res?.data?.data?.email, name: res?.data?.data?.name })
+            );
+            navigate('/dashboard')
+          } else {
+            toast.error(res?.data?.message);
+          }
+        }
+      } catch (e) {
+        toast.error(`Something went wrong catch`);
+      }
 
       // Reset form
       setEmail("");
